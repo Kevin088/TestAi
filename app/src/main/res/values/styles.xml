@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AppCompat主题，适配AppCompatActivity -->
+    <style name="Theme.TestAi" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 主色调，可根据实际需求调整 -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+</resources>

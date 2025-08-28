@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/pk_background"
+    android:padding="16dp">
+
+    <!-- VS标题 -->
+    <TextView
+        android:id="@+id/tv_vs_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VS"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@drawable/vs_background"
+        android:padding="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <!-- PK时间信息 -->
+    <TextView
+        android:id="@+id/tv_pk_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="- 随机PK 05:00 -"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_vs_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/tv_pk_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="斩杀模式"
+        android:textColor="#FFD700"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_pk_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- 卡片1 - 左上角 -->
+    <com.example.testai.pkanim.PkCardView
+        android:id="@+id/card_user_1"
+        android:layout_width="0dp"
+        android:layout_height="122dp"
+        android:background="@drawable/pk_card_background"
+        android:padding="12dp"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_pk_mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical"
+        android:layout_marginTop="8dp" />
+
+    <!-- 卡片2 - 右上角 -->
+    <com.example.testai.pkanim.PkCardView
+        android:id="@+id/card_user_2"
+        android:layout_width="0dp"
+        android:layout_height="122dp"
+        android:background="@drawable/pk_card_background"
+        android:padding="12dp"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_pk_mode"
+        app:layout_constraintStart_toEndOf="@+id/guideline_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- 卡片3 - 左下角 -->
+    <com.example.testai.pkanim.PkCardView
+        android:id="@+id/card_user_3"
+        android:layout_width="0dp"
+        android:layout_height="122dp"
+        android:background="@drawable/pk_card_background"
+        android:padding="12dp"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@id/card_user_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical"
+        android:layout_marginTop="8dp" />
+
+    <!-- 卡片4 - 右下角 -->
+    <com.example.testai.pkanim.PkCardView
+        android:id="@+id/card_user_4"
+        android:layout_width="0dp"
+        android:layout_height="122dp"
+        android:background="@drawable/pk_card_background"
+        android:padding="12dp"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@id/card_user_2"
+        app:layout_constraintStart_toEndOf="@+id/guideline_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <!-- 测试按钮区域 -->
+    <LinearLayout
+        android:id="@+id/ll_test_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/card_user_3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btn_test_card2"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="第2个离开"
+            android:textSize="12sp"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="#FF5722" />
+
+        <Button
+            android:id="@+id/btn_test_card3"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="第3个离开"
+            android:textSize="12sp"
+            android:layout_marginHorizontal="4dp"
+            android:backgroundTint="#FF9800" />
+
+        <Button
+            android:id="@+id/btn_test_card4"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="第4个离开"
+            android:textSize="12sp"
+            android:layout_marginHorizontal="4dp"
+            android:backgroundTint="#FFC107" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:text="重置"
+            android:textSize="12sp"
+            android:layout_marginStart="4dp"
+            android:backgroundTint="#4CAF50" />
+
+    </LinearLayout>
+
+    <!-- 纵向辅助线 - 50% -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
