@@ -1,9 +1,9 @@
 package com.example.testai.fireway2
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.Point
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import kotlin.math.cos
@@ -11,235 +11,224 @@ import kotlin.math.sin
 
 /**
  * 自定义布局，管理四个圆角视图和六条连接它们的矩形轨道
+ * 
+ * 该布局可以自动在四个圆形视图之间创建连接轨道，形成一个完整的网格连接系统。
+ * 轨道包括四条边框连接和两条对角线连接，总共六条轨道。
+ * 
+ * @param context Android上下文
+ * @param attrs 属性集合，用于XML布局中的属性设置
+ * @param defStyleAttr 默认样式属性
  */
 class FirewayGridLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    
-    init {
-        Log.d("FirewayGrid", "FirewayGridLayout initialized")
+
+    companion object {
+        /** 轨道总数量 - 4条边框 + 2条对角线 */
+        private const val TRACK_COUNT = 6
+        /** 圆形视图数量 */
+        private const val CIRCLE_COUNT = 4
+        /** 轨道宽度（像素） */
+        private const val TRACK_WIDTH = 50
     }
 
-    // 存储四个圆角视图
+    /** 存储圆形视图的列表 */
     private val circleViews = mutableListOf<View>()
-    
-    // 存储四个圆角视图的中心点位置
+    /** 存储圆形视图中心位置的列表 */
     private val circlePositions = mutableListOf<Point>()
-    
-    // 存储六个矩形轨道视图
+    /** 存储轨道视图的列表 */
     private val trackViews = mutableListOf<FrameLayout>()
-    
-    // 存储从Activity传递的circle视图引用
+    /** 标记是否已完成初始化 */
+    private var isInitialized = false
+
     /**
-     * 设置circle视图列表
-     * @param circles 从Activity传递过来的circle视图列表
+     * 设置圆形视图列表
+     * 
+     * 该方法用于设置需要连接的圆形视图，设置后会自动重新布局并创建连接轨道。
+     * 
+     * @param circles 圆形视图列表，通常包含4个视图
      */
     fun setCircleViews(circles: List<View>) {
         circleViews.clear()
         circleViews.addAll(circles)
-        Log.d("FirewayGrid", "Received ${circles.size} circle views from Activity")
-        
-        // 触发重新布局
         requestLayout()
     }
-
-    private var isInitialized = false
     
+    /**
+     * 布局回调方法
+     * 
+     * 当布局发生变化时被调用，确保在布局尺寸确定后进行初始化。
+     * 只在第一次布局且尺寸大于0时执行初始化操作。
+     * 
+     * @param changed 布局是否发生变化
+     * @param left 左边界
+     * @param top 上边界
+     * @param right 右边界
+     * @param bottom 下边界
+     */
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         
-        // 只在第一次布局时初始化
         if (!isInitialized && width > 0 && height > 0) {
             isInitialized = true
-            
-            // 获取circle视图的位置
-            layoutCircleViews()
-            
-            // 创建轨道视图
-            createTrackViews()
-            
-            // 如果已经有位置信息，立即布局轨道
-            if (circlePositions.isNotEmpty()) {
-                layoutTrackViews()
-            }
-            
-            Log.d("FirewayGrid", "Layout completed")
+            initializeLayout()
         }
     }
 
-    private val trackHeight = 40 // 轨道高度
-    
+    /**
+     * 初始化布局
+     * 
+     * 创建轨道视图并开始布局圆形视图的位置计算。
+     * 该方法在布局尺寸确定后被调用一次。
+     */
+    private fun initializeLayout() {
+        createTrackViews()
+        layoutCircleViews()
+    }
+
+    /**
+     * 创建轨道视图
+     * 
+     * 创建6个FrameLayout作为连接轨道，设置深灰色背景、阴影和透明度。
+     * 如果轨道视图已存在则跳过创建。
+     */
     private fun createTrackViews() {
-        // 如果已经创建过轨道视图，直接返回
-        if (trackViews.isNotEmpty()) {
-            Log.d("FirewayGrid", "Track views already created, skipping")
-            return
-        }
+        if (trackViews.isNotEmpty()) return
         
-        Log.d("FirewayGrid", "Creating ${6} track views")
-        // 创建6个矩形轨道ViewGroup
-        // 轨道连接：左上-右上，左上-左下，左上-右下，右上-左下，右上-右下，左下-右下
-        for (i in 0..5) {
+        repeat(TRACK_COUNT) {
             val trackView = FrameLayout(context).apply {
-                // 设置轨道颜色为深灰色
                 setBackgroundColor(Color.DKGRAY)
-                // 设置更高的层级，确保轨道显示在圆球上面
-                elevation = 10f
-                // 设置透明度
-                alpha = 0.8f
-                // 设置可见性
                 visibility = View.VISIBLE
             }
             
             trackViews.add(trackView)
             addView(trackView)
-            
-            Log.d("FirewayGrid", "Track view $i created and added with dark gray color")
         }
     }
 
+    /**
+     * 布局轨道视图
+     * 
+     * 根据圆形视图的位置计算并设置每条轨道的位置、大小和旋转角度。
+     * 创建6条连接：4条边框连接 + 2条对角线连接。
+     */
     private fun layoutTrackViews() {
-        Log.d("FirewayGrid", "Layout tracks: circles=${circlePositions.size}, tracks=${trackViews.size}")
-        
-        // 确保有足够的圆圈位置和轨道视图
-        if (circlePositions.size < 4 || trackViews.size < 6) {
-            Log.w("FirewayGrid", "Not enough positions or tracks to layout")
+        if (circlePositions.size < CIRCLE_COUNT || trackViews.size < TRACK_COUNT) {
             return
         }
         
-        // 定义连接关系：每对圆圈的索引
-        // 圆圈位置：0=左上, 1=右上, 2=左下, 3=右下
         val connections = listOf(
-            Pair(0, 1), // 左上-右上（顶边）
-            Pair(1, 3), // 右上-右下（右边）
-            Pair(3, 2), // 右下-左下（底边）
-            Pair(2, 0), // 左下-左上（左边）
-            Pair(0, 3), // 左上-右下（对角线1）
-            Pair(1, 2)  // 右上-左下（对角线2）
+            0 to 1, // 左上-右上
+            1 to 3, // 右上-右下
+            3 to 2, // 右下-左下
+            2 to 0, // 左下-左上
+            0 to 3, // 左上-右下
+            1 to 2  // 右上-左下
         )
         
-        // 布局每条轨道
-        for (i in connections.indices) {
-            val (startIdx, endIdx) = connections[i]
-            val start = circlePositions[startIdx]
-            val end = circlePositions[endIdx]
-            val trackView = trackViews[i]
-            
-            // 使用简化的布局方法
-            layoutTrackSimple(trackView, start, end, i)
+        connections.forEachIndexed { index, (startIdx, endIdx) ->
+            layoutTrack(
+                trackViews[index],
+                circlePositions[startIdx],
+                circlePositions[endIdx]
+            )
         }
     }
     
-    private fun layoutTrackSimple(trackView: FrameLayout, start: Point, end: Point, trackIndex: Int) {
-        // 计算轨道的中心位置
+    /**
+     * 布局单个轨道
+     * 
+     * 计算两点之间的距离、角度，并设置轨道视图的位置、大小和旋转。
+     * 轨道会以两点连线的中心为中心点进行旋转。
+     * 
+     * @param trackView 要布局的轨道视图
+     * @param start 起始点坐标
+     * @param end 结束点坐标
+     */
+    private fun layoutTrack(trackView: FrameLayout, start: Point, end: Point) {
         val centerX = (start.x + end.x) / 2
         val centerY = (start.y + end.y) / 2
         
-        // 计算轨道长度和角度
         val dx = end.x - start.x
         val dy = end.y - start.y
-        val length = Math.sqrt((dx * dx + dy * dy).toDouble()).toInt()
-        val angle = Math.atan2(dy.toDouble(), dx.toDouble()) * 180 / Math.PI
+        val length = kotlin.math.sqrt((dx * dx + dy * dy).toDouble()).toInt()
+        val angle = kotlin.math.atan2(dy.toDouble(), dx.toDouble()) * 180 / kotlin.math.PI
         
-        // 轨道尺寸 - 使用实际计算的距离
-        val trackWidth = 20  // 轨道宽度
-        val trackLength = length  // 使用实际距离，确保连接到圆圈
+        val left = centerX - length / 2
+        val top = centerY - TRACK_WIDTH / 2
+        val right = left + length
+        val bottom = top + TRACK_WIDTH
         
-        // 计算轨道位置
-        val left = centerX - trackLength / 2
-        val top = centerY - trackWidth / 2
-        val right = left + trackLength
-        val bottom = top + trackWidth
-        
-        // 直接使用计算的位置，不进行边界限制以保持轨道的正确尺寸
-        trackView.layout(left, top, right, bottom)
-        
-        // 设置轨道的旋转角度
-        trackView.rotation = angle.toFloat()
-        
-        // 设置旋转中心为轨道视图的中心
-        trackView.pivotX = (right - left) / 2.0f
-        trackView.pivotY = (bottom - top) / 2.0f
-        
-        trackView.visibility = View.VISIBLE
-        trackView.alpha = 0.8f
-        trackView.elevation = 4f
-        
-        Log.d("FirewayGrid", "Track $trackIndex: center=($centerX,$centerY), angle=${angle.toInt()}°, layout=($left,$top,$right,$bottom)")
+        trackView.apply {
+            layout(left, top, right, bottom)
+            rotation = angle.toFloat()
+            pivotX = length / 2.0f
+            pivotY = TRACK_WIDTH / 2.0f
+            visibility = View.VISIBLE
+        }
     }
-
-    /**
-     * 查找四个圆角视图
-     */
-
-    
-
     
     /**
-     * 获取四个圆角视图的实际位置
+     * 计算圆形视图的默认位置
+     * 
+     * 当没有设置圆形视图时，在布局中心周围按90度间隔生成4个默认位置。
+     * 位置按顺序为：右(0°)、下(90°)、左(180°)、上(270°)。
+     * 
+     * @param width 布局宽度
+     * @param height 布局高度
      */
     private fun calculateCirclePositions(width: Int, height: Int) {
-        // 使用默认的圆形排列
         val centerX = width / 2
         val centerY = height / 2
         val radius = minOf(width, height) / 3
         
-        for (i in 0 until 4) {
-            val angle = i * 90.0 * Math.PI / 180.0
+        repeat(CIRCLE_COUNT) { i ->
+            val angle = i * 90.0 * kotlin.math.PI / 180.0
             val x = centerX + (radius * cos(angle)).toInt()
             val y = centerY + (radius * sin(angle)).toInt()
             circlePositions.add(Point(x, y))
         }
-        
-        Log.d("FirewayGrid", "Generated ${circlePositions.size} default circle positions")
     }
     
+    /**
+     * 布局圆形视图并获取其位置
+     * 
+     * 如果没有圆形视图，则使用默认位置；
+     * 如果有圆形视图，则通过post方法异步获取每个视图的实际屏幕位置，
+     * 转换为相对于当前布局的坐标，并在所有位置获取完成后触发轨道布局。
+     */
     private fun layoutCircleViews() {
-        // 如果没有circle视图，使用默认位置
         if (circleViews.isEmpty()) {
-            Log.w("FirewayGrid", "No circle views available, using default positions")
             circlePositions.clear()
             calculateCirclePositions(width, height)
             return
         }
         
-        // 创建临时列表来收集位置
         val tempPositions = mutableListOf<Point>()
         var completedCount = 0
         
-        // 获取每个circle视图的实际位置
-        for (view in circleViews) {
-            // 使用post确保视图已经完成布局
+        circleViews.forEach { view ->
             view.post {
-                // 获取视图相对于父容器的位置
                 val location = IntArray(2)
                 view.getLocationOnScreen(location)
                 
-                // 获取FirewayGridLayout的位置
                 val myLocation = IntArray(2)
                 this.getLocationOnScreen(myLocation)
                 
-                // 计算相对于FirewayGridLayout的位置
                 val relativeX = location[0] - myLocation[0] + view.width / 2
                 val relativeY = location[1] - myLocation[1] + view.height / 2
                 
                 tempPositions.add(Point(relativeX, relativeY))
                 completedCount++
-                Log.d("FirewayGrid", "Circle position: ($relativeX, $relativeY)")
                 
-                // 当所有位置都获取完成后，更新circlePositions并重新布局轨道
                 if (completedCount == circleViews.size) {
                     circlePositions.clear()
                     circlePositions.addAll(tempPositions)
-                    post {
-                        layoutTrackViews()
-                    }
+                    post { layoutTrackViews() }
                 }
             }
         }
-        
-        Log.d("FirewayGrid", "Started updating ${circleViews.size} circle positions")
     }
 }
