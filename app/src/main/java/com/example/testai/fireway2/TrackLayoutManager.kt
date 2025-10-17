@@ -9,10 +9,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * 轨道管理类，管理四个圆形视图和六条连接它们的矩形轨道
+ * 轨道管理类，管理2-4个圆形视图和它们之间的连接轨道
  * 
- * 该管理类可以自动在四个圆形视图之间创建连接轨道，形成一个完整的网格连接系统。
- * 轨道包括四条边框连接和两条对角线连接，总共六条轨道。
+ * 该管理类可以自动在圆形视图之间创建连接轨道，形成完整的网格连接系统。
+ * 支持2个、3个或4个圆形视图的动态连接。
  * 轨道视图将添加到指定的根视图中，减少布局层级。
  * 
  * @param context Android上下文
@@ -24,10 +24,6 @@ class TrackLayoutManager(
 ) {
 
     companion object {
-        /** 轨道总数量 - 4条边框 + 2条对角线 */
-        private const val TRACK_COUNT = 6
-        /** 圆形视图数量 */
-        private const val CIRCLE_COUNT = 4
         /** 轨道宽度（像素） */
         private const val TRACK_WIDTH = 50
     }
@@ -44,11 +40,12 @@ class TrackLayoutManager(
     /**
      * 设置圆形视图列表
      * 
-     * 该方法用于设置需要连接的圆形视图，设置后会自动重新布局并创建连接轨道。
+     * 该方法用于设置需要连接的圆形视图，支持2-4个视图，设置后会自动重新布局并创建连接轨道。
      * 
-     * @param circles 圆形视图列表，通常包含4个视图
+     * @param circles 圆形视图列表，支持2-4个视图
      */
     fun setCircleViews(circles: List<View>) {
+        require(circles.size in 2..4) { "圆形视图数量必须在2-4个之间" }
         circleViews.clear()
         circleViews.addAll(circles)
         initializeLayout()
@@ -66,6 +63,7 @@ class TrackLayoutManager(
             initializeLayout()
         }
     }
+    
 
     /**
      * 清理轨道视图
@@ -96,13 +94,21 @@ class TrackLayoutManager(
     /**
      * 创建轨道视图
      * 
-     * 创建6个FrameLayout作为连接轨道，设置深灰色背景、阴影和透明度。
-     * 如果轨道视图已存在则跳过创建。
+     * 根据圆形视图数量动态创建FrameLayout作为连接轨道，设置深灰色背景。
+     * 轨道数量 = n*(n-1)/2，其中n为圆形视图数量。
      */
     private fun createTrackViews() {
-        if (trackViews.isNotEmpty()) return
+        // 清理现有轨道视图
+        trackViews.forEach { fireWayRoot.removeView(it) }
+        trackViews.clear()
         
-        repeat(TRACK_COUNT) {
+        val circleCount = circleViews.size
+        if (circleCount < 2) return
+        
+        // 计算需要的轨道数量：n*(n-1)/2
+        val trackCount = circleCount * (circleCount - 1) / 2
+        
+        repeat(trackCount) {
             val trackView = FrameLayout(context).apply {
                 setBackgroundColor(Color.DKGRAY)
                 visibility = View.VISIBLE
@@ -117,28 +123,27 @@ class TrackLayoutManager(
      * 布局轨道视图
      * 
      * 根据圆形视图的位置计算并设置每条轨道的位置、大小和旋转角度。
-     * 创建6条连接：4条边框连接 + 2条对角线连接。
+     * 动态创建所有圆形视图之间的连接。
      */
     private fun layoutTrackViews() {
-        if (circlePositions.size < CIRCLE_COUNT || trackViews.size < TRACK_COUNT) {
+        val circleCount = circlePositions.size
+        if (circleCount < 2 || trackViews.isEmpty()) {
             return
         }
         
-        val connections = listOf(
-            0 to 1, // 左上-右上
-            1 to 3, // 右上-右下
-            3 to 2, // 右下-左下
-            2 to 0, // 左下-左上
-            0 to 3, // 左上-右下
-            1 to 2  // 右上-左下
-        )
-        
-        connections.forEachIndexed { index, (startIdx, endIdx) ->
-            layoutTrack(
-                trackViews[index],
-                circlePositions[startIdx],
-                circlePositions[endIdx]
-            )
+        // 动态生成所有圆形视图之间的连接
+        var trackIndex = 0
+        for (i in 0 until circleCount) {
+            for (j in (i + 1) until circleCount) {
+                if (trackIndex < trackViews.size) {
+                    layoutTrack(
+                        trackViews[trackIndex],
+                        circlePositions[i],
+                        circlePositions[j]
+                    )
+                    trackIndex++
+                }
+            }
         }
     }
     
