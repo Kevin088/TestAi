@@ -187,30 +187,78 @@ class TrackLayoutManager(
      * 如果没有圆形视图，则使用默认位置；
      * 如果有圆形视图，则通过post方法异步获取每个视图的实际屏幕位置，
      * 转换为相对于当前布局的坐标，并在所有位置获取完成后触发轨道布局。
+     * 使用数组确保位置按circleViews中view的顺序添加。
      */
     private fun layoutCircleViews() {
         if (circleViews.isEmpty()) {
             return
         }
         
-        val tempPositions = mutableListOf<Point>()
+        val tempPositions = arrayOfNulls<Point>(circleViews.size)
         var completedCount = 0
         
-        circleViews.forEach { view ->
+        circleViews.forEachIndexed { index, view ->
             view.post {
                 // 优化：直接计算相对于fireWayRoot的坐标，避免屏幕坐标转换
                 val relativeX = view.x.toInt() + view.width / 2
                 val relativeY = view.y.toInt() + view.height / 2
                 
-                tempPositions.add(Point(relativeX, relativeY))
+                tempPositions[index] = Point(relativeX, relativeY)
                 completedCount++
                 
                 if (completedCount == circleViews.size) {
                     circlePositions.clear()
-                    circlePositions.addAll(tempPositions)
+                    // 按数组顺序添加，确保与circleViews顺序一致
+                    tempPositions.forEach { point ->
+                        point?.let { circlePositions.add(it) }
+                    }
                     fireWayRoot.post { layoutTrackViews() }
                 }
             }
         }
+    }
+
+    /**
+     * 获取所有轨道视图
+     * 
+     * @return 轨道视图列表的只读副本
+     */
+    fun getTrackViews(): List<FrameLayout> {
+        return trackViews.toList()
+    }
+
+    /**
+     * 获取与指定圆形视图相邻的轨道视图
+     * 
+     * 根据圆形视图的位置索引，返回所有与该圆形视图连接的轨道视图。
+     * 圆形视图索引定义：左上=0, 右上=1, 左下=2, 右下=3
+     * 
+     * @param circleIndex 圆形视图的位置索引 (0-3)
+     * @return 与该圆形视图相邻的轨道视图列表
+     * @throws IllegalArgumentException 如果索引超出范围
+     */
+    fun getAdjacentTrackViews(circleIndex: Int): List<FrameLayout> {
+        require(circleIndex in 0 until circleViews.size) { 
+            "圆形视图索引超出范围: $circleIndex, 当前圆形视图数量: ${circleViews.size}" 
+        }
+        
+        val adjacentTracks = mutableListOf<FrameLayout>()
+        val circleCount = circleViews.size
+        
+        // 根据当前的轨道连接逻辑，找到与指定圆形视图相邻的轨道
+        var trackIndex = 0
+        for (i in 0 until circleCount) {
+            for (j in (i + 1) until circleCount) {
+                // 如果当前轨道连接包含指定的圆形视图索引
+                if (i == circleIndex || j == circleIndex) {
+                    if (trackIndex < trackViews.size) {
+                        adjacentTracks.add(trackViews[trackIndex])
+                    }
+                }
+                trackIndex++
+            }
+        }
+        
+        return adjacentTracks
     }
 }
