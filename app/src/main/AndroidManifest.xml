@@ -17,12 +17,6 @@
             android:name=".fireway2.FirewayGridActivity"
             android:exported="true" />
         <activity
-            android:name=".fireway2.SimpleTrackTestActivity"
-            android:exported="true" />
-        <activity
-            android:name=".fireway2.FourCirclesActivity"
-            android:exported="true" />
-        <activity
             android:name=".MainActivity2"
             android:exported="false" />
         <activity

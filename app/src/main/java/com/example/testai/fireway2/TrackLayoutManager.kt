@@ -3,6 +3,7 @@ package com.example.testai.fireway2
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -11,61 +12,55 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * 轨道管理类，管理2-4个圆形视图和它们之间的连接轨道
+ * 轨道布局管理器
  * 
- * 该管理类可以自动在圆形视图之间创建连接轨道，形成完整的网格连接系统。
- * 支持2个、3个或4个圆形视图的动态连接。
- * 轨道视图将添加到指定的根视图中，减少布局层级。
+ * 负责管理圆形视图之间的轨道连接，支持2-4个圆形视图的动态布局。
+ * 提供轨道视图的创建、布局和管理功能。
  * 
  * @param context Android上下文
- * @param fireWayRoot 根视图，轨道视图将添加到此视图中
+ * @param fireWayRoot FrameLayout根布局容器，用于承载轨道视图
  */
 class TrackLayoutManager(
     private val context: Context,
-    private val fireWayRoot: androidx.constraintlayout.widget.ConstraintLayout
+    private val fireWayRoot: FrameLayout
 ) {
 
     companion object {
-        /** 轨道宽度（像素） */
         private const val TRACK_WIDTH = 50
     }
 
-    /** 存储圆形视图的列表 */
+    // 圆形视图列表
     private val circleViews = mutableListOf<View>()
-    /** 存储圆形视图中心位置的列表 */
+    // 圆形视图位置列表
     private val circlePositions = mutableListOf<Point>()
-    /** 存储轨道视图的列表 */
+    // 轨道视图列表
     private val trackViews = mutableListOf<FrameLayout>()
-    /** 标记是否已完成初始化 */
+    // 初始化状态标志
     private var isInitialized = false
 
     /**
-     * 设置圆形视图列表
-     * 
-     * 该方法用于设置需要连接的圆形视图，支持2-4个视图，设置后会自动重新布局并创建连接轨道。
+     * 设置圆形视图
      * 
      * @param circles 圆形视图列表，支持2-4个视图
+     * @throws IllegalArgumentException 如果视图数量不在2-4范围内
      */
     fun setCircleViews(circles: List<View>) {
-        require(circles.size in 2..4) { "圆形视图数量必须在2-4个之间" }
+        require(circles.size in 2..4) { "圆形视图数量必须在2-4之间，当前数量: ${circles.size}" }
         circleViews.clear()
         circleViews.addAll(circles)
-        initializeLayout()
+        isInitialized = false
     }
     
     /**
-     * 手动初始化轨道布局
+     * 初始化轨道布局
      * 
-     * 当根视图尺寸确定后调用此方法来初始化轨道布局。
-     * 只在第一次调用且根视图尺寸大于0时执行初始化操作。
+     * 在视图布局完成后调用，开始创建和布局轨道视图。
      */
     fun initialize() {
-        if (!isInitialized && fireWayRoot.width > 0 && fireWayRoot.height > 0) {
-            isInitialized = true
+        if (!isInitialized && circleViews.isNotEmpty()) {
             initializeLayout()
         }
     }
-    
 
     /**
      * 清理轨道视图
@@ -105,7 +100,9 @@ class TrackLayoutManager(
         trackViews.clear()
         
         val circleCount = circleViews.size
-        if (circleCount < 2) return
+        if (circleCount < 2) {
+            return
+        }
         
         // 计算需要的轨道数量：n*(n-1)/2
         val trackCount = circleCount * (circleCount - 1) / 2
@@ -117,7 +114,7 @@ class TrackLayoutManager(
             }
             addTextToTracks(trackView)
             trackViews.add(trackView)
-            fireWayRoot.addView(trackView)
+            // 不在这里添加到父容器，在layoutTrack方法中添加
         }
     }
 
@@ -150,128 +147,115 @@ class TrackLayoutManager(
     }
     
     /**
-     * 布局单个轨道
+     * 布局单条轨道
      * 
-     * 计算两点之间的距离、角度，并设置轨道视图的位置、大小和旋转。
-     * 轨道会以两点连线的中心为中心点进行旋转。
+     * 根据起始和结束点计算轨道的位置、大小和旋转角度。
+     * 针对FrameLayout容器进行了优化，使用绝对定位确保轨道准确连接圆形视图。
      * 
      * @param trackView 要布局的轨道视图
      * @param start 起始点坐标
      * @param end 结束点坐标
      */
     private fun layoutTrack(trackView: FrameLayout, start: Point, end: Point) {
-        val centerX = (start.x + end.x) / 2
-        val centerY = (start.y + end.y) / 2
+        val deltaX = end.x - start.x
+        val deltaY = end.y - start.y
+        val distance = kotlin.math.sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()).toFloat()
+        val angle = kotlin.math.atan2(deltaY.toDouble(), deltaX.toDouble()) * 180 / kotlin.math.PI
+        Log.e("ssssss","angle:$angle")
+        // 确保轨道视图已添加到FrameLayout容器中
+        if (trackView.parent == null) {
+            fireWayRoot.addView(trackView)
+        }
         
-        val dx = end.x - start.x
-        val dy = end.y - start.y
-        val length = kotlin.math.sqrt((dx * dx + dy * dy).toDouble()).toInt()
-        val angle = kotlin.math.atan2(dy.toDouble(), dx.toDouble()) * 180 / kotlin.math.PI
-        
-        val left = centerX - length / 2
-        val top = centerY - TRACK_WIDTH / 2
-        val right = left + length
-        val bottom = top + TRACK_WIDTH
-        
-        trackView.apply {
-            layout(left, top, right, bottom)
-            rotation = angle.toFloat()
-            pivotX = length / 2.0f
-            pivotY = TRACK_WIDTH / 2.0f
-            visibility = View.VISIBLE
+        // 使用post确保视图已经被添加到FrameLayout布局中
+        trackView.post {
+            // 为FrameLayout设置轨道的宽度和高度
+            val layoutParams = FrameLayout.LayoutParams(
+                distance.toInt(),
+                TRACK_WIDTH
+            )
+            trackView.layoutParams = layoutParams
+            
+            // 计算轨道的起始位置（左上角），在FrameLayout中使用绝对定位
+            val trackStartX = start.x.toFloat()
+            val trackStartY = start.y.toFloat() - TRACK_WIDTH / 2
+            
+            // 在FrameLayout中直接设置视图的绝对位置
+            trackView.x = trackStartX
+            trackView.y = trackStartY
+            
+            // 设置旋转角度
+            trackView.rotation = angle.toFloat()
+            
+            // 设置旋转中心点为轨道的起始点中心，确保围绕连接点旋转
+            trackView.pivotX = 0f
+            trackView.pivotY = (TRACK_WIDTH / 2).toFloat()
+
+            if (angle < 180 && angle > 90) {
+                trackView.scaleY = -1f
+            }
         }
     }
 
     
     /**
-     * 布局圆形视图并获取其位置
+     * 布局圆形视图
      * 
-     * 如果没有圆形视图，则使用默认位置；
-     * 如果有圆形视图，则通过post方法异步获取每个视图的实际屏幕位置，
-     * 转换为相对于当前布局的坐标，并在所有位置获取完成后触发轨道布局。
-     * 使用数组确保位置按circleViews中view的顺序添加。
+     * 异步计算每个圆形视图的相对位置并存储到circlePositions中。
+     * 使用view.post确保视图已完成布局后再进行位置计算。
      */
     private fun layoutCircleViews() {
-        if (circleViews.isEmpty()) {
-            return
-        }
+        circlePositions.clear()
         
+        if (circleViews.isEmpty()) return
+        
+        // 使用数组确保位置按索引顺序添加
         val tempPositions = arrayOfNulls<Point>(circleViews.size)
         var completedCount = 0
         
         circleViews.forEachIndexed { index, view ->
             view.post {
-                // 优化：直接计算相对于fireWayRoot的坐标，避免屏幕坐标转换
-                val relativeX = view.x.toInt() + view.width / 2
-                val relativeY = view.y.toInt() + view.height / 2
+                // 获取圆形视图在屏幕上的绝对位置
+                val viewLocation = IntArray(2)
+                view.getLocationOnScreen(viewLocation)
+                
+                // 获取FrameLayout容器在屏幕上的绝对位置
+                val frameLocation = IntArray(2)
+                fireWayRoot.getLocationOnScreen(frameLocation)
+                
+                // 计算圆形视图相对于FrameLayout容器的位置
+                val relativeX = viewLocation[0] - frameLocation[0] + view.width / 2
+                val relativeY = viewLocation[1] - frameLocation[1] + view.height / 2
                 
                 tempPositions[index] = Point(relativeX, relativeY)
                 completedCount++
                 
+                // 当所有位置计算完成后，按顺序添加到circlePositions
                 if (completedCount == circleViews.size) {
                     circlePositions.clear()
-                    // 按数组顺序添加，确保与circleViews顺序一致
                     tempPositions.forEach { point ->
                         point?.let { circlePositions.add(it) }
                     }
-                    fireWayRoot.post { layoutTrackViews() }
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取所有轨道视图
-     * 
-     * @return 轨道视图列表的只读副本
-     */
-    fun getTrackViews(): List<FrameLayout> {
-        return trackViews.toList()
-    }
-
-    /**
-     * 获取与指定圆形视图相邻的轨道视图
-     * 
-     * 根据圆形视图的位置索引，返回所有与该圆形视图连接的轨道视图。
-     * 圆形视图索引定义：左上=0, 右上=1, 左下=2, 右下=3
-     * 
-     * @param circleIndex 圆形视图的位置索引 (0-3)
-     * @return 与该圆形视图相邻的轨道视图列表
-     * @throws IllegalArgumentException 如果索引超出范围
-     */
-    fun getAdjacentTrackViews(circleIndex: Int): List<FrameLayout> {
-        require(circleIndex in 0 until circleViews.size) { 
-            "圆形视图索引超出范围: $circleIndex, 当前圆形视图数量: ${circleViews.size}" 
-        }
-        
-        val adjacentTracks = mutableListOf<FrameLayout>()
-        val circleCount = circleViews.size
-        
-        // 根据当前的轨道连接逻辑，找到与指定圆形视图相邻的轨道
-        var trackIndex = 0
-        for (i in 0 until circleCount) {
-            for (j in (i + 1) until circleCount) {
-                // 如果当前轨道连接包含指定的圆形视图索引
-                if (i == circleIndex || j == circleIndex) {
-                    if (trackIndex < trackViews.size) {
-                        adjacentTracks.add(trackViews[trackIndex])
+                    
+                    fireWayRoot.post {
+                        layoutTrackViews()
+                        isInitialized = true
                     }
                 }
-                trackIndex++
             }
         }
-        
-        return adjacentTracks
     }
 
+
     /**
-     * 测试方法：向所有轨道视图中添加文字"12345"
+     * 添加文字到轨道视图
      * 
-     * 该方法会遍历所有轨道视图，在每个FrameLayout中添加一个TextView显示"12345"文字。
-     * 文字会居中显示，颜色为白色，便于在轨道上可见。
+     * 为指定的轨道视图添加居中显示的"12345"文字。
+     * 
+     * @param parent 要添加文字的轨道视图
      */
     fun addTextToTracks(parent: FrameLayout) {
-        // 清除之前可能存在的子视图
+        // 清除现有子视图
         parent.removeAllViews()
 
         // 创建TextView
@@ -293,4 +277,6 @@ class TrackLayoutManager(
         // 添加TextView到轨道视图中
         parent.addView(textView, layoutParams)
     }
+    
+
 }
