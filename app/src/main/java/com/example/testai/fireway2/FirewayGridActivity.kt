@@ -77,7 +77,7 @@ class FirewayGridActivity : AppCompatActivity() {
      * 给fireWayContainer添加50dp的marginTop
      */
     private fun addMarginToFireWayContainer() {
-        val layoutParams = fireWayContainer.layoutParams as ConstraintLayout.LayoutParams
+        val layoutParams = root.layoutParams as LinearLayout.LayoutParams
         val currentMarginTop = layoutParams.topMargin
         val newMarginTop = currentMarginTop + (50 * resources.displayMetrics.density).toInt()
         
