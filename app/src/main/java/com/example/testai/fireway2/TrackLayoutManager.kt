@@ -3,27 +3,25 @@ package com.example.testai.fireway2
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
-import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * 自定义布局，管理四个圆角视图和六条连接它们的矩形轨道
+ * 轨道管理类，管理四个圆形视图和六条连接它们的矩形轨道
  * 
- * 该布局可以自动在四个圆形视图之间创建连接轨道，形成一个完整的网格连接系统。
+ * 该管理类可以自动在四个圆形视图之间创建连接轨道，形成一个完整的网格连接系统。
  * 轨道包括四条边框连接和两条对角线连接，总共六条轨道。
+ * 轨道视图将添加到指定的根视图中，减少布局层级。
  * 
  * @param context Android上下文
- * @param attrs 属性集合，用于XML布局中的属性设置
- * @param defStyleAttr 默认样式属性
+ * @param fireWayRoot 根视图，轨道视图将添加到此视图中
  */
-class FirewayGridLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+class TrackLayoutManager(
+    private val context: Context,
+    private val fireWayRoot: androidx.constraintlayout.widget.ConstraintLayout
+) {
 
     companion object {
         /** 轨道总数量 - 4条边框 + 2条对角线 */
@@ -53,28 +51,35 @@ class FirewayGridLayout @JvmOverloads constructor(
     fun setCircleViews(circles: List<View>) {
         circleViews.clear()
         circleViews.addAll(circles)
-        requestLayout()
+        initializeLayout()
     }
     
     /**
-     * 布局回调方法
+     * 手动初始化轨道布局
      * 
-     * 当布局发生变化时被调用，确保在布局尺寸确定后进行初始化。
-     * 只在第一次布局且尺寸大于0时执行初始化操作。
-     * 
-     * @param changed 布局是否发生变化
-     * @param left 左边界
-     * @param top 上边界
-     * @param right 右边界
-     * @param bottom 下边界
+     * 当根视图尺寸确定后调用此方法来初始化轨道布局。
+     * 只在第一次调用且根视图尺寸大于0时执行初始化操作。
      */
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        
-        if (!isInitialized && width > 0 && height > 0) {
+    fun initialize() {
+        if (!isInitialized && fireWayRoot.width > 0 && fireWayRoot.height > 0) {
             isInitialized = true
             initializeLayout()
         }
+    }
+
+    /**
+     * 清理轨道视图
+     * 
+     * 从根视图中移除所有轨道视图并清空相关数据。
+     */
+    fun cleanup() {
+        trackViews.forEach { trackView ->
+            fireWayRoot.removeView(trackView)
+        }
+        trackViews.clear()
+        circleViews.clear()
+        circlePositions.clear()
+        isInitialized = false
     }
 
     /**
@@ -104,7 +109,7 @@ class FirewayGridLayout @JvmOverloads constructor(
             }
             
             trackViews.add(trackView)
-            addView(trackView)
+            fireWayRoot.addView(trackView)
         }
     }
 
@@ -169,28 +174,7 @@ class FirewayGridLayout @JvmOverloads constructor(
             visibility = View.VISIBLE
         }
     }
-    
-    /**
-     * 计算圆形视图的默认位置
-     * 
-     * 当没有设置圆形视图时，在布局中心周围按90度间隔生成4个默认位置。
-     * 位置按顺序为：右(0°)、下(90°)、左(180°)、上(270°)。
-     * 
-     * @param width 布局宽度
-     * @param height 布局高度
-     */
-    private fun calculateCirclePositions(width: Int, height: Int) {
-        val centerX = width / 2
-        val centerY = height / 2
-        val radius = minOf(width, height) / 3
-        
-        repeat(CIRCLE_COUNT) { i ->
-            val angle = i * 90.0 * kotlin.math.PI / 180.0
-            val x = centerX + (radius * cos(angle)).toInt()
-            val y = centerY + (radius * sin(angle)).toInt()
-            circlePositions.add(Point(x, y))
-        }
-    }
+
     
     /**
      * 布局圆形视图并获取其位置
@@ -201,8 +185,6 @@ class FirewayGridLayout @JvmOverloads constructor(
      */
     private fun layoutCircleViews() {
         if (circleViews.isEmpty()) {
-            circlePositions.clear()
-            calculateCirclePositions(width, height)
             return
         }
         
@@ -211,14 +193,9 @@ class FirewayGridLayout @JvmOverloads constructor(
         
         circleViews.forEach { view ->
             view.post {
-                val location = IntArray(2)
-                view.getLocationOnScreen(location)
-                
-                val myLocation = IntArray(2)
-                this.getLocationOnScreen(myLocation)
-                
-                val relativeX = location[0] - myLocation[0] + view.width / 2
-                val relativeY = location[1] - myLocation[1] + view.height / 2
+                // 优化：直接计算相对于fireWayRoot的坐标，避免屏幕坐标转换
+                val relativeX = view.x.toInt() + view.width / 2
+                val relativeY = view.y.toInt() + view.height / 2
                 
                 tempPositions.add(Point(relativeX, relativeY))
                 completedCount++
@@ -226,7 +203,7 @@ class FirewayGridLayout @JvmOverloads constructor(
                 if (completedCount == circleViews.size) {
                     circlePositions.clear()
                     circlePositions.addAll(tempPositions)
-                    post { layoutTrackViews() }
+                    fireWayRoot.post { layoutTrackViews() }
                 }
             }
         }
