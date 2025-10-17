@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.testai.fireway2.FirewayGridActivity
 import com.example.testai.pkanim.PkActivity
 import com.example.testai.ui.theme.TestAiTheme
 
@@ -90,6 +91,18 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ) {
             Text("AI服务测试")
         }
+        
+        Button(
+            onClick = {
+                val intent = Intent(context, FirewayGridActivity::class.java)
+                context.startActivity(intent)
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("网格+对角线布局")
+        }
+        
+
     }
 }
 
