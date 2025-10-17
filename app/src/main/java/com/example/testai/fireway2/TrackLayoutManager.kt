@@ -3,8 +3,10 @@ package com.example.testai.fireway2
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Point
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -113,7 +115,7 @@ class TrackLayoutManager(
                 setBackgroundColor(Color.DKGRAY)
                 visibility = View.VISIBLE
             }
-            
+            addTextToTracks(trackView)
             trackViews.add(trackView)
             fireWayRoot.addView(trackView)
         }
@@ -260,5 +262,35 @@ class TrackLayoutManager(
         }
         
         return adjacentTracks
+    }
+
+    /**
+     * 测试方法：向所有轨道视图中添加文字"12345"
+     * 
+     * 该方法会遍历所有轨道视图，在每个FrameLayout中添加一个TextView显示"12345"文字。
+     * 文字会居中显示，颜色为白色，便于在轨道上可见。
+     */
+    fun addTextToTracks(parent: FrameLayout) {
+        // 清除之前可能存在的子视图
+        parent.removeAllViews()
+
+        // 创建TextView
+        val textView = TextView(context).apply {
+            text = "12345"
+            textSize = 12f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+        }
+
+        // 设置LayoutParams使文字居中
+        val layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER
+        }
+
+        // 添加TextView到轨道视图中
+        parent.addView(textView, layoutParams)
     }
 }
