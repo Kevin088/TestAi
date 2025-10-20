@@ -1,10 +1,14 @@
 package com.example.testai.fireway2
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +29,10 @@ class FirewayGridActivity : AppCompatActivity() {
     private lateinit var root: ConstraintLayout
 
     private lateinit var btnAddMargin: Button
+    private lateinit var btnTestCircle0: Button
+    private lateinit var btnTestCircle1: Button
+    private lateinit var btnTestCircle2: Button
+    private lateinit var btnTestCircle3: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +65,10 @@ class FirewayGridActivity : AppCompatActivity() {
         
         // 初始化按钮
         btnAddMargin = findViewById(R.id.btn_add_margin)
+        btnTestCircle0 = findViewById(R.id.btn_test_circle_0)
+        btnTestCircle1 = findViewById(R.id.btn_test_circle_1)
+        btnTestCircle2 = findViewById(R.id.btn_test_circle_2)
+        btnTestCircle3 = findViewById(R.id.btn_test_circle_3)
         
         // 设置按钮点击监听器
         setupButtonListeners()
@@ -69,8 +81,39 @@ class FirewayGridActivity : AppCompatActivity() {
         btnAddMargin.setOnClickListener {
             addMarginToFireWayContainer()
         }
+        
+        // 四个测试按钮的点击事件
+        btnTestCircle0.setOnClickListener { testCircleClick(0) }
+        btnTestCircle1.setOnClickListener { testCircleClick(1) }
+        btnTestCircle2.setOnClickListener { testCircleClick(2) }
+        btnTestCircle3.setOnClickListener { testCircleClick(3) }
     }
     
+
+    
+    /**
+     * 测试圆形按钮点击事件
+     * 
+     * 调用 getAdjacentTrackViews 方法获取相邻轨道并显示结果
+     * 
+     * @param circleIndex 圆形索引
+     */
+    private fun testCircleClick(circleIndex: Int) {
+        Log.d("FirewayGridActivity", "点击了圆形$circleIndex 按钮")
+        
+        // 调用 getAdjacentTrackViews 获取相邻轨道
+        val adjacentTracks = trackLayoutManager.getAdjacentTrackViews(circleIndex)
+        
+        if (adjacentTracks.isNotEmpty()) {
+            // 显示找到的轨道数量
+            val message = "圆形$circleIndex 找到 ${adjacentTracks.size} 条相邻轨道"
+            Log.d("FirewayGridActivity", message)
+            // 为每个相邻轨道添加编号
+            adjacentTracks.forEachIndexed { index, track ->
+                Log.d("FirewayGridActivity", (track.tag as? TrackLayoutManager.TrackIndexInfo)?.toString() ?: "无索引信息")
+            }
+        }
+    }
 
     
     /**
