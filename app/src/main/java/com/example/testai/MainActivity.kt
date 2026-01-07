@@ -19,7 +19,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.testai.fireway2.FirewayGridActivity
+import com.example.testai.mvi.LoginActivity
 import com.example.testai.pkanim.PkActivity
+import com.example.testai.testpanne.QualityPanelActivity
 import com.example.testai.ui.theme.TestAiTheme
 
 class MainActivity : ComponentActivity() {
@@ -102,6 +104,25 @@ fun MainScreen(modifier: Modifier = Modifier) {
             Text("网格+对角线布局")
         }
         
+        Button(
+            onClick = {
+                val intent = Intent(context, QualityPanelActivity::class.java)
+                context.startActivity(intent)
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("清晰度选择半弹层")
+        }
+        
+        Button(
+            onClick = {
+                val intent = Intent(context, LoginActivity::class.java)
+                context.startActivity(intent)
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("MVI登录示例")
+        }
 
     }
 }
