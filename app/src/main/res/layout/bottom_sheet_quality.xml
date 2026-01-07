@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet"
+    android:paddingTop="16dp"
+    android:paddingBottom="24dp">
+
+    <!-- 超清选项 -->
+    <TextView
+        android:id="@+id/quality_bluray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="超清 1080p"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EEEEEE" />
+
+    <!-- 高清选项 -->
+    <TextView
+        android:id="@+id/quality_hd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="高清 720p"
+        android:textSize="16sp"
+        android:textColor="#FF6B6B"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>
+
