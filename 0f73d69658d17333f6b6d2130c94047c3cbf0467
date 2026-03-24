@@ -1,0 +1,23 @@
+app/src/main/java/com/example/testai/fireway2/TrackLayoutManager.kt
+  90b1b4adb66a2e31 29,33,35-36,38-39,41-42,136,145-147,151,154,158,161,211,224,226,233,237-238,246,249-250,269,274,276,280,285,293,300,341,343,345,352,354,367,370,375,379,384
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.18",
+  "base_commit_sha": "0f73d69658d17333f6b6d2130c94047c3cbf0467",
+  "prompts": {
+    "90b1b4adb66a2e31": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce751bcb-9733-42ab-80db-b5cddbdb5fe5",
+        "model": "default"
+      },
+      "human_author": "xuze <xuze@gitlab.com>",
+      "messages": [],
+      "total_additions": 42,
+      "total_deletions": 23,
+      "accepted_lines": 42,
+      "overriden_lines": 0
+    }
+  }
+}
