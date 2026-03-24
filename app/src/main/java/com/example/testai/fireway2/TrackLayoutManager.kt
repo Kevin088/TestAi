@@ -26,16 +26,20 @@ class TrackLayoutManager(
 ) {
 
     companion object {
+        // 轨道的固定宽度（像素）
         private const val TRACK_WIDTH = 50
     }
 
-    // 圆形视图列表
+    // 圆形视图列表 - 存储所有需要连接的圆形视图
     private val circleViews = mutableListOf<View>()
-    // 圆形视图位置列表
+    
+    // 圆形视图位置列表 - 存储每个圆形视图相对于FrameLayout容器的中心坐标
     private val circlePositions = mutableListOf<Point>()
-    // 轨道视图列表
+    
+    // 轨道视图列表 - 存储所有连接圆形的轨道FrameLayout
     private val trackViews = mutableListOf<FrameLayout>()
-    // 初始化状态标志
+    
+    // 初始化状态标志 - 防止重复初始化
     private var isInitialized = false
 
     /**
@@ -129,7 +133,7 @@ class TrackLayoutManager(
     )
     
     private fun createTrackViews() {
-        // 清理现有轨道视图
+        // 清理现有轨道视图 - 移除旧的轨道并清空列表
         trackViews.forEach { fireWayRoot.removeView(it) }
         trackViews.clear()
         
@@ -138,20 +142,23 @@ class TrackLayoutManager(
             return
         }
         
-        // 动态生成所有圆形视图之间的连接，并记录索引信息
+        // 动态生成所有圆形视图之间的连接
+        // 使用双层循环确保每两个圆形之间都有一条轨道
+        // 例如：3个圆形会生成3条轨道 (0-1, 0-2, 1-2)
         for (i in 0 until circleCount) {
             for (j in (i + 1) until circleCount) {
                 val trackView = FrameLayout(context).apply {
+                    // 设置轨道背景色为深灰色
                     setBackgroundColor(Color.DKGRAY)
                     visibility = View.VISIBLE
-                    // 将起止圆形索引信息记录到轨道view的tag中
+                    // 将起止圆形索引信息记录到轨道view的tag中，便于后续查询
                     tag = TrackIndexInfo(startIndex = i, endIndex = j)
                 }
                 
-                // 添加文字到轨道
+                // 在轨道上添加文字标签
                 addTextToTracks(trackView)
                 
-                // 添加到轨道视图列表
+                // 添加到轨道视图列表，保持顺序
                 trackViews.add(trackView)
                 
                 // 记录日志便于调试
@@ -201,6 +208,7 @@ class TrackLayoutManager(
      * @param end 结束点坐标
      */
     private fun layoutTrack(trackView: FrameLayout, start: Point, end: Point) {
+        // 计算两个圆形之间的距离和角度
         val deltaX = end.x - start.x
         val deltaY = end.y - start.y
         val distance = kotlin.math.sqrt((deltaX * deltaX + deltaY * deltaY).toDouble()).toFloat()
@@ -213,20 +221,21 @@ class TrackLayoutManager(
             fireWayRoot.addView(trackView)
         }
         
-        // 使用post确保视图已经被添加到FrameLayout布局中
+        // 使用post确保视图已经被添加到FrameLayout布局中，避免布局计算错误
         trackView.post {
-            // 为FrameLayout设置轨道的宽度和高度
+            // 为FrameLayout设置轨道的宽度（距离）和高度（固定宽度）
             val layoutParams = FrameLayout.LayoutParams(
                 distance.toInt(),
                 TRACK_WIDTH
             )
             trackView.layoutParams = layoutParams
             
-            // 计算轨道中心点坐标
+            // 计算两个圆形的中点坐标 - 这是轨道的理想中心位置
             val centerX = (start.x + end.x) / 2f
             val centerY = (start.y + end.y) / 2f
             
-            // 计算轨道左上角位置，使轨道中心对准计算出的中心点
+            // 计算轨道左上角位置
+            // 由于轨道是以左上角为原点，需要向左上方偏移半个轨道尺寸
             val trackStartX = centerX - distance / 2f
             val trackStartY = centerY - TRACK_WIDTH / 2f
             
@@ -234,10 +243,11 @@ class TrackLayoutManager(
             trackView.x = trackStartX
             trackView.y = trackStartY
             
-            // 设置旋转角度
+            // 设置旋转角度 - 使轨道指向目标圆形
             trackView.rotation = angle.toFloat()
             
-            // 设置旋转中心点为轨道的几何中心，确保围绕轨道中心旋转
+            // 设置旋转中心点为轨道的几何中心
+            // 这样旋转时轨道会围绕自身中心旋转，而不是围绕左上角
             trackView.pivotX = distance / 2f
             trackView.pivotY = (TRACK_WIDTH / 2).toFloat()
             Log.d("TrackLayoutManager", "轨道布局完成 - 中心点: ($centerX, $centerY), 旋转中心: (${distance/2f}, ${TRACK_WIDTH/2f})")
@@ -256,21 +266,23 @@ class TrackLayoutManager(
         
         if (circleViews.isEmpty()) return
         
-        // 使用数组确保位置按索引顺序添加
+        // 使用数组确保位置按索引顺序添加，避免异步操作导致的顺序混乱
         val tempPositions = arrayOfNulls<Point>(circleViews.size)
         var completedCount = 0
         
         circleViews.forEachIndexed { index, view ->
+            // 使用post确保视图已完成布局后再进行位置计算
             view.post {
-                // 获取圆形视图在屏幕上的绝对位置
+                // 获取圆形视图在屏幕上的绝对位置（左上角坐标）
                 val viewLocation = IntArray(2)
                 view.getLocationOnScreen(viewLocation)
                 
-                // 获取FrameLayout容器在屏幕上的绝对位置
+                // 获取FrameLayout容器在屏幕上的绝对位置（左上角坐标）
                 val frameLocation = IntArray(2)
                 fireWayRoot.getLocationOnScreen(frameLocation)
                 
                 // 计算圆形视图相对于FrameLayout容器的位置
+                // 加上view.width/2 和 view.height/2 是为了获取圆形的中心坐标
                 val relativeX = viewLocation[0] - frameLocation[0] + view.width / 2
                 val relativeY = viewLocation[1] - frameLocation[1] + view.height / 2
                 
@@ -278,12 +290,14 @@ class TrackLayoutManager(
                 completedCount++
                 
                 // 当所有位置计算完成后，按顺序添加到circlePositions
+                // 这样可以确保轨道布局时使用的位置数据是完整且有序的
                 if (completedCount == circleViews.size) {
                     circlePositions.clear()
                     tempPositions.forEach { point ->
                         point?.let { circlePositions.add(it) }
                     }
                     
+                    // 所有圆形位置确定后，开始布局轨道
                     fireWayRoot.post {
                         layoutTrackViews()
                         isInitialized = true
@@ -324,17 +338,20 @@ class TrackLayoutManager(
             val indexInfo = trackView.tag as? TrackIndexInfo
             if (indexInfo != null) {
                 when {
+                    // 当轨道的起始圆形等于指定索引时
                     indexInfo.startIndex == index -> {
-                        // 当startIndex等于index时，设置scaleX为1
+                        // 设置scaleX为1，表示轨道方向正常
                         trackView.scaleX = 1f
+                        // 特殊处理：当起始圆形为1时，对某些轨道进行Y轴翻转
                         if (indexInfo.startIndex == 1 && (indexInfo.endIndex == 2 || indexInfo.endIndex == 3)) {
                             trackView.scaleY = -1f
                         }
                         adjacentTracks.add(trackView)
                         Log.d("TrackLayoutManager", "找到相邻轨道: 圆形$index -> 圆形${indexInfo.endIndex}, scaleX=1")
                     }
+                    // 当轨道的结束圆形等于指定索引时
                     indexInfo.endIndex == index -> {
-                        // 当endIndex等于index时，设置scaleX为-1
+                        // 设置scaleX为-1，表示轨道方向反向
                         trackView.scaleX = -1f
                         adjacentTracks.add(trackView)
                         Log.d("TrackLayoutManager", "找到相邻轨道: 圆形${indexInfo.startIndex} -> 圆形$index, scaleX=-1")
@@ -347,22 +364,24 @@ class TrackLayoutManager(
     }
     
     fun addTextToTracks(parent: FrameLayout) {
-        // 清除现有子视图
+        // 清除现有子视图，确保每次添加文字时容器是干净的
         parent.removeAllViews()
 
-        // 创建TextView
+        // 创建TextView用于显示轨道标签
         val textView = TextView(context).apply {
             text = "中国人"
             textSize = 12f
             setTextColor(Color.WHITE)
+            // 设置文字在TextView内部居中
             gravity = Gravity.CENTER
         }
 
-        // 设置LayoutParams使文字居中
+        // 设置LayoutParams使文字在FrameLayout中居中显示
         val layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
         ).apply {
+            // 使用gravity属性让FrameLayout将TextView放在中心位置
             gravity = Gravity.CENTER
         }
 

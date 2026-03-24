@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PopupWindow 示例"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="限定礼物能量"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 0/300 "
+            android:textSize="16sp"
+            android:textColor="#FF6B6B"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/iv_info"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_show_below"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="在下方显示PopupWindow"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btn_show_above"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="在上方显示PopupWindow"/>
+
+</LinearLayout>
