@@ -1,0 +1,10 @@
+{
+  "networkPolicy": {
+    "default": "deny",
+    "allow": [
+      "open.feishu.cn",
+      "*.feishu.cn",
+      "*.larksuite.com"
+    ]
+  }
+}

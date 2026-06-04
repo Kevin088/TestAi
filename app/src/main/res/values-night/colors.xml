@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_background">#FF101114</color>
+    <color name="app_surface">#FF1B1D22</color>
+    <color name="app_surface_variant">#FF272A31</color>
+    <color name="app_text_primary">#FFF4F4F5</color>
+    <color name="app_text_secondary">#FFB8BBC2</color>
+    <color name="app_text_tertiary">#FF8F939B</color>
+    <color name="app_divider">#FF343741</color>
+    <color name="app_accent">#FFFF8A8A</color>
+    <color name="app_price">#FFFFA6C9</color>
+    <color name="app_popup_border">#FF7DB5FF</color>
+</resources>
