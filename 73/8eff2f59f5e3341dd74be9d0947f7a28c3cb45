@@ -1,0 +1,121 @@
+app/src/main/res/drawable/bg_cover_placeholder.xml
+  51bfd69ef7945a20 3
+  90b1b4adb66a2e31 1-2,4-5
+app/src/main/res/drawable/bg_pay_confirm_btn.xml
+  90b1b4adb66a2e31 1-8
+app/src/main/res/values-night/colors.xml
+  51bfd69ef7945a20 1-13
+openspec/changes/add-dark-mode/specs/dark-mode/spec.md
+  d46f655d657f0613 1-2,5,9,13,16,20,24,28,31,35,38,42,45,49,52
+  0dd953d2bc03644e 3-4,6-8,10-12,14-15,17-19,21-23,25-27,29-30,32-34,36-37,39-41,43-44,46-48,50-51,53-55
+openspec/changes/add-dark-mode/tasks.md
+  0dd953d2bc03644e 1,8,15,22,26
+  51bfd69ef7945a20 3-6,10-13,17-20,24-25,27
+  d46f655d657f0613 2,7,9,14,16,21,23
+.codex/skills/openspec-sync-specs/SKILL.md
+  e4c63cbbd888e911 1-150
+.codex/skills/openspec-apply-change/SKILL.md
+  e4c63cbbd888e911 1-157
+app/src/main/res/layout/activity_order_confirm.xml
+  90b1b4adb66a2e31 1-5,7-11,13-25,27-33,35-60,62-70,72-102,104-111,113-119,121-128,130-157,159-176,178-191,193-213
+  51bfd69ef7945a20 6,12,26,34,61,71,103,112,120,129,158,177,192
+app/src/main/java/com/example/testai/theme/ThemeMode.kt
+  51bfd69ef7945a20 1-29
+app/src/main/res/drawable/bg_selected_dot.xml
+  90b1b4adb66a2e31 1-4
+.codex/skills/openspec-archive-change/SKILL.md
+  e4c63cbbd888e911 1-124
+openspec/changes/add-dark-mode/.openspec.yaml
+  d46f655d657f0613 1-2
+openspec/changes/add-dark-mode/proposal.md
+  0dd953d2bc03644e 1,3,5,7-10,12,14-15,17,19,21-23
+  d46f655d657f0613 2,4,6,11,13,16,18,20
+app/src/main/java/com/example/testai/ai_ui/OrderConfirmActivity.kt
+  90b1b4adb66a2e31 1-20
+app/src/main/res/drawable/bg_alipay_mark.xml
+  90b1b4adb66a2e31 1-5
+openspec/changes/add-dark-mode/design.md
+  d46f655d657f0613 2,4,6,8,10,16,18,23,25,27,29,31,33,35,37,39,41,43,45,47
+  0dd953d2bc03644e 1,3,5,7,9,11-15,17,19-22,24,26,28,30,32,34,36,38,40,42,44,46,48-51
+.codex/skills/openspec-explore/SKILL.md
+  e4c63cbbd888e911 1-269
+app/src/main/res/drawable/bg_order_card.xml
+  90b1b4adb66a2e31 1-2,4-5
+  51bfd69ef7945a20 3
+.codex/skills/openspec-propose/SKILL.md
+  e4c63cbbd888e911 1-116
+app/src/test/java/com/example/testai/theme/ThemeModeTest.kt
+  51bfd69ef7945a20 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "738eff2f59f5e3341dd74be9d0947f7a28c3cb45",
+  "prompts": {
+    "0dd953d2bc03644e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558510",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 90,
+      "overriden_lines": 0
+    },
+    "51bfd69ef7945a20": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780562168",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 99,
+      "overriden_lines": 0
+    },
+    "90b1b4adb66a2e31": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce751bcb-9733-42ab-80db-b5cddbdb5fe5",
+        "model": "default"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 245,
+      "overriden_lines": 0
+    },
+    "d46f655d657f0613": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558347",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    },
+    "e4c63cbbd888e911": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558838",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 816,
+      "overriden_lines": 0
+    }
+  }
+}
