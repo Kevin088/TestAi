@@ -1,0 +1,116 @@
+app/src/main/java/com/example/testai/testpanne/QualityPanelActivity.kt
+  51bfd69ef7945a20 7,82-83,86-87
+app/src/main/java/com/example/testai/model/GridItem.kt
+  90b1b4adb66a2e31 4-12,19-20
+app/src/main/res/drawable/popup_bg.xml
+  51bfd69ef7945a20 3,7
+app/src/main/res/layout/activity_glow_bar_preview.xml
+  51bfd69ef7945a20 7,19,37
+app/src/main/res/layout/bottom_sheet_quality.xml
+  51bfd69ef7945a20 17,32,41
+app/src/main/res/layout/activity_main.xml
+  51bfd69ef7945a20 8,11
+app/src/main/java/com/example/testai/MainActivity.kt
+  51bfd69ef7945a20 13,17-18,28-29,37-42,45-49,59-63,75-79,154-186,193
+app/src/main/res/layout/activity_popup_demo.xml
+  51bfd69ef7945a20 5,14,30,38
+app/src/main/java/com/example/testai/view/ConnectionLayout.kt
+  51bfd69ef7945a20 12-13,22,68,119
+app/src/main/res/drawable/bg_bottom_sheet.xml
+  51bfd69ef7945a20 5
+app/src/main/res/values/colors.xml
+  51bfd69ef7945a20 10-20
+app/src/main/res/layout/activity_grid.xml
+  51bfd69ef7945a20 7,19,93
+app/src/main/res/drawable/bullet_point.xml
+  51bfd69ef7945a20 4
+app/src/main/res/layout/popup_gift_info.xml
+  51bfd69ef7945a20 16,40,62
+app/src/main/res/values/styles.xml
+  51bfd69ef7945a20 4,8-11,13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "8c7a4eee9680769971013dad0aa0e3d4b2550b0e",
+  "prompts": {
+    "0dd953d2bc03644e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558510",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 105,
+      "total_deletions": 105,
+      "accepted_lines": 90,
+      "overriden_lines": 0
+    },
+    "51bfd69ef7945a20": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780562168",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 208,
+      "total_deletions": 67,
+      "accepted_lines": 208,
+      "overriden_lines": 0
+    },
+    "90b1b4adb66a2e31": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ce751bcb-9733-42ab-80db-b5cddbdb5fe5",
+        "model": "default"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 270,
+      "total_deletions": 16,
+      "accepted_lines": 255,
+      "overriden_lines": 0
+    },
+    "d15648db84fa51a1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780557702",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 1,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "d46f655d657f0613": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558347",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 158,
+      "total_deletions": 0,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    },
+    "e4c63cbbd888e911": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "codex_1780558838",
+        "model": "gpt-5.5"
+      },
+      "human_author": "徐露露",
+      "messages": [],
+      "total_additions": 816,
+      "total_deletions": 0,
+      "accepted_lines": 816,
+      "overriden_lines": 0
+    }
+  }
+}
