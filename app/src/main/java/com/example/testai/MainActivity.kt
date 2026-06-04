@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,6 +25,8 @@ import com.example.testai.fireway2.FirewayGridActivity
 import com.example.testai.mvi.LoginActivity
 import com.example.testai.pkanim.PkActivity
 import com.example.testai.testpanne.QualityPanelActivity
+import com.example.testai.theme.ThemeMode
+import com.example.testai.theme.ThemePreferences
 import com.example.testai.ui.theme.TestAiTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,9 +34,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TestAiTheme {
+            val context = LocalContext.current
+            val selectedThemeMode = remember {
+                mutableStateOf(ThemePreferences.getThemeMode(context))
+            }
+
+            TestAiTheme(darkTheme = selectedThemeMode.value.isDark(context)) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
+                        selectedThemeMode = selectedThemeMode.value,
+                        onThemeModeSelected = { mode ->
+                            selectedThemeMode.value = mode
+                            ThemePreferences.setThemeMode(context, mode)
+                        },
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -41,7 +56,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    selectedThemeMode: ThemeMode = ThemeMode.SYSTEM,
+    onThemeModeSelected: (ThemeMode) -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
     
     Column(
@@ -52,6 +71,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
         Text(
             text = "TestAi 演示项目",
             modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        ThemeModeSelector(
+            selectedMode = selectedThemeMode,
+            onModeSelected = onThemeModeSelected
         )
         
         Button(
@@ -124,6 +148,39 @@ fun MainScreen(modifier: Modifier = Modifier) {
             Text("MVI登录示例")
         }
 
+    }
+}
+
+@Composable
+private fun ThemeModeSelector(
+    selectedMode: ThemeMode,
+    onModeSelected: (ThemeMode) -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(bottom = 16.dp)
+    ) {
+        Text("主题模式")
+        androidx.compose.foundation.layout.Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            ThemeMode.entries.forEach { mode ->
+                FilterChip(
+                    selected = selectedMode == mode,
+                    onClick = { onModeSelected(mode) },
+                    label = {
+                        Text(
+                            when (mode) {
+                                ThemeMode.SYSTEM -> "跟随系统"
+                                ThemeMode.LIGHT -> "浅色"
+                                ThemeMode.DARK -> "暗色"
+                            }
+                        )
+                    }
+                )
+            }
+        }
     }
 }
 

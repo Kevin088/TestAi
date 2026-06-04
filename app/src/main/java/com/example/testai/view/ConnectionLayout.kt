@@ -9,6 +9,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
+import com.example.testai.R
 
 class ConnectionLayout @JvmOverloads constructor(
     context: Context,
@@ -17,7 +19,7 @@ class ConnectionLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val paint = Paint().apply {
-        color = Color.LTGRAY
+        color = ContextCompat.getColor(context, R.color.app_divider)
         strokeWidth = 2f
         style = Paint.Style.STROKE
         isAntiAlias = true
@@ -63,7 +65,7 @@ class ConnectionLayout @JvmOverloads constructor(
         // 创建6个矩形ViewGroup
         for (i in 0..5) {
             val rectangleView = View(context).apply {
-                setBackgroundColor(Color.LTGRAY)
+                setBackgroundColor(ContextCompat.getColor(context, R.color.app_divider))
                 layoutParams = LayoutParams(0, 70)
             }
             rectangleViews.add(rectangleView)

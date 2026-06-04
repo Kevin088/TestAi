@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="每一次抽取该扭蛋都会积攒能量。能量攒满后能够爆发威力,因此第300次抽该扭蛋，必得[限定礼物]喵！"
-        android:textColor="#333333"
+        android:textColor="@color/app_text_primary"
         android:textSize="14sp"
         android:lineSpacingExtra="4dp"
         android:layout_marginBottom="16dp"/>
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="300次后将重置能量条"
-            android:textColor="#666666"
+            android:textColor="@color/app_text_secondary"
             android:textSize="14sp"/>
     </LinearLayout>
 
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="中途抽到限定礼物,不会重置能量条"
-            android:textColor="#666666"
+            android:textColor="@color/app_text_secondary"
             android:textSize="14sp"/>
     </LinearLayout>
 

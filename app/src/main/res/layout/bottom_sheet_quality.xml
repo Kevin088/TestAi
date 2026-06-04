@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="超清 1080p"
         android:textSize="16sp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/app_text_primary"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:paddingTop="16dp"
@@ -29,7 +29,7 @@
         android:layout_height="1dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:background="#EEEEEE" />
+        android:background="@color/app_divider" />
 
     <!-- 高清选项 -->
     <TextView
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:text="高清 720p"
         android:textSize="16sp"
-        android:textColor="#FF6B6B"
+        android:textColor="@color/app_accent"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:paddingTop="16dp"
@@ -48,4 +48,3 @@
         android:focusable="true" />
 
 </LinearLayout>
-

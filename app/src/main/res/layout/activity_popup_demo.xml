@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
@@ -10,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PopupWindow 示例"
+        android:textColor="@color/app_text_primary"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="32dp"/>
@@ -25,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="限定礼物能量"
+            android:textColor="@color/app_text_primary"
             android:textSize="16sp"/>
 
         <TextView
@@ -32,7 +35,7 @@
             android:layout_height="wrap_content"
             android:text=" 0/300 "
             android:textSize="16sp"
-            android:textColor="#FF6B6B"
+            android:textColor="@color/app_accent"
             android:textStyle="bold"/>
 
         <ImageView

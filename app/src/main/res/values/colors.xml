@@ -7,4 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="app_background">#FFF5F5F7</color>
+    <color name="app_surface">#FFFFFFFF</color>
+    <color name="app_surface_variant">#FFF0F2F7</color>
+    <color name="app_text_primary">#FF222222</color>
+    <color name="app_text_secondary">#FF777777</color>
+    <color name="app_text_tertiary">#FF999999</color>
+    <color name="app_divider">#FFEEEEEE</color>
+    <color name="app_accent">#FFFF6B6B</color>
+    <color name="app_price">#FFE48FB0</color>
+    <color name="app_popup_border">#FF4A90E2</color>
 </resources>

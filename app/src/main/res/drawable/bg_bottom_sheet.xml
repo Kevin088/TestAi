@@ -2,8 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     
-    <!-- 白色背景 -->
-    <solid android:color="@android:color/white" />
+    <solid android:color="@color/app_surface" />
     
     <!-- 顶部圆角 -->
     <corners
@@ -11,4 +10,3 @@
         android:topRightRadius="16dp" />
     
 </shape>
-

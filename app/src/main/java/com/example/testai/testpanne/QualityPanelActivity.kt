@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.testai.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -78,14 +79,13 @@ class QualityPanelActivity : AppCompatActivity() {
     private fun updateQualitySelection(qualityBluray: TextView, qualityHd: TextView) {
         when (currentQuality) {
             "超清" -> {
-                qualityBluray.setTextColor(getColor(android.R.color.black))
-                qualityHd.setTextColor(getColor(android.R.color.darker_gray))
+                qualityBluray.setTextColor(ContextCompat.getColor(this, R.color.app_text_primary))
+                qualityHd.setTextColor(ContextCompat.getColor(this, R.color.app_text_secondary))
             }
             "高清" -> {
-                qualityBluray.setTextColor(getColor(android.R.color.darker_gray))
-                qualityHd.setTextColor(getColor(android.R.color.holo_red_light))
+                qualityBluray.setTextColor(ContextCompat.getColor(this, R.color.app_text_secondary))
+                qualityHd.setTextColor(ContextCompat.getColor(this, R.color.app_accent))
             }
         }
     }
 }
-
